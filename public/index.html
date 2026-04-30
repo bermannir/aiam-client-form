@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>שאלון אפיון לקוח — AI-AM Solutions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Rubik', Arial, sans-serif;
+      background: linear-gradient(135deg, #e8f0fe 0%, #f1f3f4 100%);
+      min-height: 100vh;
+      padding: 32px 16px 60px;
+      color: #2d2d2d;
+    }
+
+    .card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(26,115,232,0.10), 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d5bba 100%);
+      padding: 32px 40px 28px;
+      text-align: center;
+    }
+    .header img {
+      height: 56px;
+      object-fit: contain;
+      margin-bottom: 18px;
+      filter: brightness(0) invert(1);
+    }
+    .header h1 {
+      color: #fff;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ── Body ── */
+    .body { padding: 36px 40px 40px; }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a73e8;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f0fe;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title .num {
+      background: #1a73e8;
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Field ── */
+    .field { margin-bottom: 18px; }
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #444;
+    }
+    label .req { color: #e53935; margin-right: 2px; }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #d0d7e3;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: #2d2d2d;
+      background: #fafbff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      direction: rtl;
+    }
+    input:focus, textarea:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+      background: #fff;
+    }
+    input.invalid, textarea.invalid {
+      border-color: #e53935;
+      box-shadow: 0 0 0 3px rgba(229,57,53,0.10);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* ── Radio group ── */
+    .radio-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .radio-option {
+      flex: 1;
+      min-width: 160px;
+    }
+    .radio-option input[type="radio"] { display: none; }
+    .radio-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 2px solid #d0d7e3;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.93rem;
+      font-weight: 500;
+      color: #555;
+      transition: all 0.18s;
+      background: #fafbff;
+      margin: 0;
+    }
+    .radio-option label .icon { font-size: 1.15rem; }
+    .radio-option input[type="radio"]:checked + label {
+      border-color: #1a73e8;
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+    .radio-option label:hover { border-color: #1a73e8; }
+
+    /* ── Business section (hidden by default) ── */
+    #business-section {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
+      margin-top: 0;
+    }
+    #business-section.visible {
+      max-height: 300px;
+      opacity: 1;
+      margin-top: 16px;
+    }
+
+    /* ── Skill scale ── */
+    .skill-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .skill-label {
+      flex: 1;
+      font-size: 0.88rem;
+      color: #444;
+      font-weight: 500;
+    }
+    .scale-buttons {
+      display: flex;
+      gap: 6px;
+    }
+    .scale-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1.5px solid #d0d7e3;
+      background: #fafbff;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #666;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scale-btn:hover { border-color: #1a73e8; color: #1a73e8; background: #e8f0fe; }
+    .scale-btn.selected { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+    .scale-hint {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: -8px;
+      margin-bottom: 14px;
+      padding: 0 2px;
+    }
+
+    /* ── Submit ── */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #1a73e8 0%, #0d5bba 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .submit-btn:hover { opacity: 0.93; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error message ── */
+    .error-msg {
+      background: #fdecea;
+      border: 1px solid #f5c6c6;
+      border-radius: 8px;
+      color: #c62828;
+      font-size: 0.88rem;
+      padding: 10px 14px;
+      margin-top: 14px;
+      display: none;
+    }
+
+    /* ── Success screen ── */
+    #success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      text-align: center;
+    }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: #e6f4ea;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin-bottom: 22px;
+    }
+    #success-screen h2 { color: #1e7e34; font-size: 1.4rem; margin-bottom: 10px; }
+    #success-screen p { color: #666; font-size: 0.95rem; line-height: 1.6; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 0 40px 30px;
+      font-size: 0.82rem;
+      color: #aaa;
+    }
+
+    @media (max-width: 520px) {
+      .body { padding: 24px 20px 28px; }
+      .header { padding: 24px 20px 20px; }
+      .footer { padding: 0 20px 24px; }
+      .skill-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- Header -->
+    <div class="header">
+      <img src="logo.jpeg" alt="AI-AM Solutions">
+      <h1>שאלון אפיון והתאמה לסדנה</h1>
+      <p>כדי שאוכל לבנות עבורך את הסדנה המדויקת והאפקטיבית ביותר,<br>אשמח למילוי השאלון הקצר שלפניך.</p>
+    </div>
+
+    <!-- Form -->
+    <div class="body" id="form-body">
+      <form id="questionnaire" novalidate>
+
+        <!-- Section 1: פרטי קשר -->
+        <div class="section">
+          <div class="section-title"><span class="num">1</span> פרטי קשר בסיסיים</div>
+
+          <div class="field">
+            <label for="name">שם מלא <span class="req">*</span></label>
+            <input type="text" id="name" name="name" placeholder="ישראל ישראלי" required>
+          </div>
+
+          <div class="field">
+            <label for="phone">מספר טלפון <span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="050-0000000" required>
+          </div>
+
+          <div class="field">
+            <label for="email">כתובת אימייל <span class="req">*</span></label>
+            <input type="email" id="email" name="email" placeholder="email@example.com" required>
+          </div>
+        </div>
+
+        <!-- Section 2: סוג לקוח -->
+        <div class="section">
+          <div class="section-title"><span class="num">2</span> סוג השירות המבוקש</div>
+
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="type-private" name="clientType" value="private" required>
+              <label for="type-private">
+                <span class="icon">👤</span> לקוח פרטי
+              </label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="type-business" name="clientType" value="business">
+              <label for="type-business">
+                <span class="icon">🏢</span> לקוח עסקי
+              </label>
+            </div>
+          </div>
+
+          <div id="business-section">
+            <label for="businessDescription" style="margin-bottom:6px;display:block;font-size:.9rem;font-weight:500;color:#444">
+              תארו בקצרה את תחום העיסוק של העסק ומהם האתגרים העיקריים שאתם פוגשים ביום-יום:
+            </label>
+            <textarea id="businessDescription" name="businessDescription" rows="3"
+              placeholder="לדוגמה: עסק בתחום השיווק הדיגיטלי, מתמודד עם ניהול תוכן רב..."></textarea>
+          </div>
+        </div>
+
+        <!-- Section 3: רקע טכני -->
+        <div class="section">
+          <div class="section-title"><span class="num">3</span> רקע טכני וידע קודם</div>
+          <p style="font-size:.85rem;color:#888;margin-bottom:16px">דרגו את יכולותיכם (1 = בסיסי מאוד, 5 = מתקדם)</p>
+
+          <div class="skill-row">
+            <div class="skill-label">שימוש בסיסי במחשב<br><span style="color:#aaa;font-weight:400;font-size:.8rem">(תוכנות אופיס, גלישה)</span></div>
+            <div class="scale-buttons" id="computer-scale">
+              <button type="button" class="scale-btn" data-group="computer" data-val="1">1</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="2">2</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="3">3</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="4">4</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="5">5</button>
+            </div>
+          </div>
+          <div class="scale-hint"><span>בסיסי מאוד</span><span>מתקדם</span></div>
+
+          <div class="skill-row">
+            <div class="skill-label">היכרות עם כלי AI<br><span style="color:#aaa;font-weight:400;font-size:.8rem">(ChatGPT, Claude וכו')</span></div>
+            <div class="scale-buttons" id="ai-scale">
+              <button type="button" class="scale-btn" data-group="ai" data-val="1">1</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="2">2</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="3">3</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="4">4</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="5">5</button>
+            </div>
+          </div>
+          <div class="scale-hint"><span>בסיסי מאוד</span><span>מתקדם</span></div>
+
+          <input type="hidden" id="computerSkill" name="computerSkill">
+          <input type="hidden" id="aiSkill" name="aiSkill">
+        </div>
+
+        <!-- Section 4: ציפיות -->
+        <div class="section">
+          <div class="section-title"><span class="num">4</span> תיאום ציפיות</div>
+
+          <div class="field">
+            <label for="expectations">מה הדבר העיקרי שהייתם רוצים לדעת לעשות בסוף הסדנה? מהן הציפיות שלכם?</label>
+            <textarea id="expectations" name="expectations" rows="4"
+              placeholder="שתפו אותנו בציפיות ובמטרות שלכם..."></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <span id="btn-text">שלח שאלון</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <div class="error-msg" id="error-msg"></div>
+
+      </form>
+    </div>
+
+    <!-- Success screen (hidden) -->
+    <div id="success-screen">
+      <div class="success-icon">✅</div>
+      <h2>השאלון נשלח בהצלחה!</h2>
+      <p>תודה רבה, <strong id="success-name"></strong>.<br>קיבלתי את פרטייך ואצור איתך קשר בהקדם לתיאום המפגש.</p>
+      <p style="margin-top:16px;font-size:.85rem;color:#aaa">ניר ברמן | AI-AM Solutions</p>
+    </div>
+
+    <div class="footer">
+      ניר ברמן | AI-AM Solutions &nbsp;·&nbsp; www.ai-am.co.il
+    </div>
+  </div>
+
+  <script>
+    // ── Radio → show/hide business section ──────────────────────────────────
+    document.querySelectorAll('input[name="clientType"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const biz = document.getElementById('business-section');
+        biz.classList.toggle('visible', radio.value === 'business' && radio.checked);
+      });
+    });
+
+    // ── Scale buttons ────────────────────────────────────────────────────────
+    document.querySelectorAll('.scale-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.dataset.group;
+        document.querySelectorAll(`.scale-btn[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById(group === 'computer' ? 'computerSkill' : 'aiSkill').value = btn.dataset.val;
+      });
+    });
+
+    // ── Form submit ──────────────────────────────────────────────────────────
+    document.getElementById('questionnaire').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form     = e.target;
+      const errorEl  = document.getElementById('error-msg');
+      const submitBtn = document.getElementById('submit-btn');
+      const spinner  = document.getElementById('spinner');
+      const btnText  = document.getElementById('btn-text');
+
+      // Clear previous errors
+      errorEl.style.display = 'none';
+      document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+
+      // Validate
+      const errors = [];
+      const name   = form.name.value.trim();
+      const phone  = form.phone.value.trim();
+      const email  = form.email.value.trim();
+      const clientType = form.clientType.value;
+
+      if (!name)  { document.getElementById('name').classList.add('invalid');  errors.push('שם מלא'); }
+      if (!phone) { document.getElementById('phone').classList.add('invalid'); errors.push('מספר טלפון'); }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('email').classList.add('invalid');
+        errors.push('כתובת אימייל תקינה');
+      }
+      if (!clientType) { errors.push('סוג לקוח'); }
+
+      if (errors.length) {
+        errorEl.textContent = `נא למלא את השדות הבאים: ${errors.join(', ')}`;
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      // Show spinner
+      submitBtn.disabled = true;
+      spinner.style.display = 'block';
+      btnText.textContent = 'שולח...';
+
+      try {
+        const payload = {
+          name,
+          phone,
+          email,
+          clientType,
+          businessDescription: (form.businessDescription || {}).value || '',
+          computerSkill: document.getElementById('computerSkill').value,
+          aiSkill:       document.getElementById('aiSkill').value,
+          expectations:  (form.expectations || {}).value || '',
+        };
+
+        const res  = await fetch('/api/submit', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+        const json = await res.json();
+
+        if (!res.ok) throw new Error(json.error || 'שגיאה בשרת');
+
+        // Show success
+        document.getElementById('form-body').style.display = 'none';
+        const success = document.getElementById('success-screen');
+        document.getElementById('success-name').textContent = name;
+        success.style.display = 'flex';
+
+      } catch (err) {
+        errorEl.textContent = err.message || 'שגיאה בשליחה. נסה שוב.';
+        errorEl.style.display = 'block';
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = 'שלח שאלון';
+      }
+    });
+  </script>
+</body>
+</html>
