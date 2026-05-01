@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="שאלון אפיון לקוח — AI-AM Solutions, ניר ברמן. מלאו את השאלון לקביעת סדנה מותאמת אישית.">
+  <link rel="icon" href="/logo.jpeg" type="image/jpeg">
   <title>שאלון אפיון לקוח — AI-AM Solutions</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -376,7 +377,7 @@
             </div>
           </fieldset>
 
-          <div id="business-section" aria-hidden="true">
+          <div id="business-section" aria-hidden="true" inert>
             <label for="businessDescription" style="margin-bottom:6px;display:block;font-size:.9rem;font-weight:500;color:#444">
               תארו בקצרה את תחום העיסוק של העסק ומהם האתגרים העיקריים שאתם פוגשים ביום-יום:
             </label>
@@ -480,6 +481,7 @@
         const isVisible = radio.value === 'business' && radio.checked;
         biz.classList.toggle('visible', isVisible);
         biz.setAttribute('aria-hidden', String(!isVisible));
+        if (isVisible) { biz.removeAttribute('inert'); } else { biz.setAttribute('inert', ''); }
       });
     });
 
