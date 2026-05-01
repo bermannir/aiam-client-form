@@ -4,6 +4,47 @@ const path       = require('path');
 const crypto     = require('crypto');
 const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
+const Anthropic  = require('@anthropic-ai/sdk');
+
+const SYSTEM_PROMPT = `אתה עוזר AI מקצועי ואדיב של AI-AM Solutions. שמך הוא "עוזר AI-AM".
+תפקידך לענות על שאלות מבקרי האתר בנוגע לשירותים, סדנאות וליווי שמציע ניר ברמן.
+
+## על AI-AM Solutions
+AI-AM Solutions מספקת פתרונות מבוססי בינה מלאכותית ואוטומציה לעסקים קטנים, מוסדות חינוך ויחידים.
+מייסד: ניר ברמן — מומחה לשילוב AI בארגונים, משלב ידע חינוכי, טכנולוגי ויזמותי.
+חזון: להנגיש את עולם הבינה המלאכותית לכל אדם וארגון בצורה פשוטה, מקצועית ומשמעותית.
+
+## שירותים עיקריים
+1. **סדנאות והרצאות על AI** — לקהלים מגוונים: מורים, מנהלים, בעלי עסקים, רשויות מקומיות.
+2. **פיתוח ממשקים מותאמים אישית** — פתרונות AI מותאמים לעסקים קטנים.
+3. **ייעוץ טכנולוגי** — ליווי לעבודה יעילה עם אוטומציה וכלי AI (ChatGPT, Claude, Canva, Zapier).
+4. **קמפיינים שיווקיים חכמים** — שימוש בכלי AI לשיווק דיגיטלי.
+
+## קהל יעד
+- מורים, מרצים ומנהלים חינוכיים
+- בעלי עסקים קטנים
+- מדריכים בתחומי טכנולוגיה
+- רשויות מקומיות ומרכזים קהילתיים
+
+## מודל מחירים (הערכה)
+- סדנאות והרצאות: החל מ-7,500 ₪/חודש לפעילות שוטפת
+- ליווי עסקי: 3,000 ₪/חודש
+- פיתוח פתרון מותאם: לפי היקף הפרויקט
+
+## יתרון תחרותי
+שילוב ייחודי של ידע חינוכי, טכנולוגי ויזמותי — עם התאמה אישית מלאה לכל לקוח.
+מתחרים הם חברות טכנולוגיה כלליות ללא התאמה ממוקדת לעסקים קטנים ולמגזר החינוכי.
+
+## כיצד להתחיל
+הצעד הראשון הוא מילוי שאלון אפיון קצר שמאפשר לניר להבין את הצרכים ולהתאים פתרון מדויק.
+
+## כללי התנהגות
+- ענה תמיד בעברית אלא אם המשתמש פונה באנגלית — אז ענה באנגלית.
+- היה ידידותי, מקצועי וקצר — מקסימום 3-4 משפטים לתשובה.
+- כשמישהו שואל על מחירים — ציין שהמחירים תלויים בהיקף ובהתאמה, והפנה למילוי שאלון.
+- כשמישהו רוצה להתחיל — הפנה למילוי שאלון האפיון.
+- אל תמציא מידע שאינו ידוע לך — אמור "אשמח לחבר אותך ישירות עם ניר".
+- אל תדון בנושאים שאינם קשורים ל-AI-AM Solutions.`;
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -269,6 +310,34 @@ function page(title, body, color) {
   <p style="color:#666;line-height:1.6">${body}</p>
 </div></body></html>`;
 }
+
+// ─── Chat API ─────────────────────────────────────────────────────────────────
+app.post('/api/chat', async (req, res) => {
+  const { messages } = req.body;
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'messages required' });
+  }
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.json({
+      message: 'שלום! אני העוזר של AI-AM Solutions 👋\nכרגע אני בתהליך הגדרה סופית. בינתיים אשמח לחבר אותך ישירות עם ניר ברמן — השאר פרטים בשאלון האפיון או פנה ישירות במייל.',
+    });
+  }
+
+  try {
+    const client   = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const response = await client.messages.create({
+      model:      'claude-sonnet-4-6',
+      max_tokens: 512,
+      system:     SYSTEM_PROMPT,
+      messages,
+    });
+    res.json({ message: response.content[0].text });
+  } catch (err) {
+    console.error('Chat error:', err.message);
+    res.status(500).json({ error: 'שגיאה בשרת. נסה שוב.' });
+  }
+});
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
