@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="שאלון אפיון לקוח — AI-AM Solutions, ניר ברמן. מלאו את השאלון לקביעת סדנה מותאמת אישית.">
   <title>שאלון אפיון לקוח — AI-AM Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,7 +49,7 @@
       margin-bottom: 8px;
     }
     .header p {
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.92);
       font-size: 0.95rem;
       line-height: 1.6;
     }
@@ -91,7 +95,7 @@
       margin-bottom: 6px;
       color: #444;
     }
-    label .req { color: #e53935; margin-right: 2px; }
+    label .req { color: #c62828; margin-right: 2px; }
 
     input[type="text"],
     input[type="tel"],
@@ -111,12 +115,12 @@
     }
     input:focus, textarea:focus {
       border-color: #1a73e8;
-      box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.18);
       background: #fff;
     }
     input.invalid, textarea.invalid {
-      border-color: #e53935;
-      box-shadow: 0 0 0 3px rgba(229,57,53,0.10);
+      border-color: #c62828;
+      box-shadow: 0 0 0 3px rgba(198,40,40,0.12);
     }
     textarea { resize: vertical; min-height: 90px; }
 
@@ -130,7 +134,14 @@
       flex: 1;
       min-width: 160px;
     }
-    .radio-option input[type="radio"] { display: none; }
+    /* Visually hidden but keyboard + screen reader accessible */
+    .radio-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+    }
     .radio-option label {
       display: flex;
       align-items: center;
@@ -142,7 +153,7 @@
       cursor: pointer;
       font-size: 0.93rem;
       font-weight: 500;
-      color: #555;
+      color: #444;
       transition: all 0.18s;
       background: #fafbff;
       margin: 0;
@@ -152,6 +163,10 @@
       border-color: #1a73e8;
       background: #e8f0fe;
       color: #1a73e8;
+    }
+    .radio-option input[type="radio"]:focus-visible + label {
+      outline: 3px solid #1a73e8;
+      outline-offset: 2px;
     }
     .radio-option label:hover { border-color: #1a73e8; }
 
@@ -182,6 +197,11 @@
       color: #444;
       font-weight: 500;
     }
+    .skill-label .sub {
+      color: #595959;
+      font-weight: 400;
+      font-size: 0.8rem;
+    }
     .scale-buttons {
       display: flex;
       gap: 6px;
@@ -195,19 +215,20 @@
       cursor: pointer;
       font-size: 0.88rem;
       font-weight: 600;
-      color: #666;
+      color: #444;
       transition: all 0.15s;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .scale-btn:hover { border-color: #1a73e8; color: #1a73e8; background: #e8f0fe; }
+    .scale-btn:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
     .scale-btn.selected { background: #1a73e8; border-color: #1a73e8; color: #fff; }
     .scale-hint {
       display: flex;
       justify-content: space-between;
-      font-size: 0.75rem;
-      color: #aaa;
+      font-size: 0.78rem;
+      color: #595959;
       margin-top: -8px;
       margin-bottom: 14px;
       padding: 0 2px;
@@ -233,6 +254,7 @@
       gap: 10px;
     }
     .submit-btn:hover { opacity: 0.93; }
+    .submit-btn:focus-visible { outline: 3px solid #0d5bba; outline-offset: 3px; }
     .submit-btn:active { transform: scale(0.99); }
     .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
@@ -253,7 +275,7 @@
       border: 1px solid #f5c6c6;
       border-radius: 8px;
       color: #c62828;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       padding: 10px 14px;
       margin-top: 14px;
       display: none;
@@ -280,14 +302,14 @@
       margin-bottom: 22px;
     }
     #success-screen h2 { color: #1e7e34; font-size: 1.4rem; margin-bottom: 10px; }
-    #success-screen p { color: #666; font-size: 0.95rem; line-height: 1.6; }
+    #success-screen p { color: #444; font-size: 0.95rem; line-height: 1.6; }
 
     /* ── Footer ── */
     .footer {
       text-align: center;
       padding: 0 40px 30px;
       font-size: 0.82rem;
-      color: #aaa;
+      color: #595959;
     }
 
     @media (max-width: 520px) {
@@ -299,57 +321,62 @@
   </style>
 </head>
 <body>
+  <main>
   <div class="card">
     <!-- Header -->
     <div class="header">
+      <img src="/logo.jpeg" alt="AI-AM Solutions לוגו">
       <h1>שאלון אפיון והתאמה לסדנה</h1>
       <p>כדי שאוכל לבנות עבורך את הסדנה המדויקת והאפקטיבית ביותר,<br>אשמח למילוי השאלון הקצר שלפניך.</p>
     </div>
 
     <!-- Form -->
     <div class="body" id="form-body">
-      <form id="questionnaire" novalidate>
+      <form id="questionnaire" novalidate aria-label="שאלון אפיון לקוח">
 
         <!-- Section 1: פרטי קשר -->
         <div class="section">
-          <div class="section-title"><span class="num">1</span> פרטי קשר בסיסיים</div>
+          <div class="section-title" aria-hidden="true"><span class="num">1</span> פרטי קשר בסיסיים</div>
 
           <div class="field">
-            <label for="name">שם מלא <span class="req">*</span></label>
-            <input type="text" id="name" name="name" placeholder="ישראל ישראלי" required>
+            <label for="name">שם מלא <span class="req" aria-label="שדה חובה">*</span></label>
+            <input type="text" id="name" name="name" placeholder="ישראל ישראלי" required autocomplete="name">
           </div>
 
           <div class="field">
-            <label for="phone">מספר טלפון <span class="req">*</span></label>
-            <input type="tel" id="phone" name="phone" placeholder="050-0000000" required>
+            <label for="phone">מספר טלפון <span class="req" aria-label="שדה חובה">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="050-0000000" required autocomplete="tel">
           </div>
 
           <div class="field">
-            <label for="email">כתובת אימייל <span class="req">*</span></label>
-            <input type="email" id="email" name="email" placeholder="email@example.com" required>
+            <label for="email">כתובת אימייל <span class="req" aria-label="שדה חובה">*</span></label>
+            <input type="email" id="email" name="email" placeholder="email@example.com" required autocomplete="email">
           </div>
         </div>
 
         <!-- Section 2: סוג לקוח -->
         <div class="section">
-          <div class="section-title"><span class="num">2</span> סוג השירות המבוקש</div>
+          <div class="section-title" aria-hidden="true"><span class="num">2</span> סוג השירות המבוקש</div>
 
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="type-private" name="clientType" value="private" required>
-              <label for="type-private">
-                <span class="icon">👤</span> לקוח פרטי
-              </label>
+          <fieldset style="border:none;padding:0;margin:0">
+            <legend class="sr-only">סוג השירות המבוקש</legend>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="type-private" name="clientType" value="private" required>
+                <label for="type-private">
+                  <span class="icon" aria-hidden="true">👤</span> לקוח פרטי
+                </label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="type-business" name="clientType" value="business">
+                <label for="type-business">
+                  <span class="icon" aria-hidden="true">🏢</span> לקוח עסקי
+                </label>
+              </div>
             </div>
-            <div class="radio-option">
-              <input type="radio" id="type-business" name="clientType" value="business">
-              <label for="type-business">
-                <span class="icon">🏢</span> לקוח עסקי
-              </label>
-            </div>
-          </div>
+          </fieldset>
 
-          <div id="business-section">
+          <div id="business-section" aria-hidden="true">
             <label for="businessDescription" style="margin-bottom:6px;display:block;font-size:.9rem;font-weight:500;color:#444">
               תארו בקצרה את תחום העיסוק של העסק ומהם האתגרים העיקריים שאתם פוגשים ביום-יום:
             </label>
@@ -360,32 +387,38 @@
 
         <!-- Section 3: רקע טכני -->
         <div class="section">
-          <div class="section-title"><span class="num">3</span> רקע טכני וידע קודם</div>
-          <p style="font-size:.85rem;color:#888;margin-bottom:16px">דרגו את יכולותיכם (1 = בסיסי מאוד, 5 = מתקדם)</p>
+          <div class="section-title" aria-hidden="true"><span class="num">3</span> רקע טכני וידע קודם</div>
+          <p style="font-size:.85rem;color:#595959;margin-bottom:16px">דרגו את יכולותיכם (1 = בסיסי מאוד, 5 = מתקדם)</p>
 
           <div class="skill-row">
-            <div class="skill-label">שימוש בסיסי במחשב<br><span style="color:#aaa;font-weight:400;font-size:.8rem">(תוכנות אופיס, גלישה)</span></div>
-            <div class="scale-buttons" id="computer-scale">
-              <button type="button" class="scale-btn" data-group="computer" data-val="1">1</button>
-              <button type="button" class="scale-btn" data-group="computer" data-val="2">2</button>
-              <button type="button" class="scale-btn" data-group="computer" data-val="3">3</button>
-              <button type="button" class="scale-btn" data-group="computer" data-val="4">4</button>
-              <button type="button" class="scale-btn" data-group="computer" data-val="5">5</button>
+            <div class="skill-label">
+              שימוש בסיסי במחשב<br>
+              <span class="sub">(תוכנות אופיס, גלישה)</span>
+            </div>
+            <div class="scale-buttons" id="computer-scale" role="group" aria-label="דרגו שימוש בסיסי במחשב מ-1 עד 5">
+              <button type="button" class="scale-btn" data-group="computer" data-val="1" aria-pressed="false" aria-label="1 — בסיסי מאוד">1</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="2" aria-pressed="false" aria-label="2">2</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="3" aria-pressed="false" aria-label="3">3</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="4" aria-pressed="false" aria-label="4">4</button>
+              <button type="button" class="scale-btn" data-group="computer" data-val="5" aria-pressed="false" aria-label="5 — מתקדם">5</button>
             </div>
           </div>
-          <div class="scale-hint"><span>בסיסי מאוד</span><span>מתקדם</span></div>
+          <div class="scale-hint" aria-hidden="true"><span>בסיסי מאוד</span><span>מתקדם</span></div>
 
           <div class="skill-row">
-            <div class="skill-label">היכרות עם כלי AI<br><span style="color:#aaa;font-weight:400;font-size:.8rem">(ChatGPT, Claude וכו')</span></div>
-            <div class="scale-buttons" id="ai-scale">
-              <button type="button" class="scale-btn" data-group="ai" data-val="1">1</button>
-              <button type="button" class="scale-btn" data-group="ai" data-val="2">2</button>
-              <button type="button" class="scale-btn" data-group="ai" data-val="3">3</button>
-              <button type="button" class="scale-btn" data-group="ai" data-val="4">4</button>
-              <button type="button" class="scale-btn" data-group="ai" data-val="5">5</button>
+            <div class="skill-label">
+              היכרות עם כלי AI<br>
+              <span class="sub">(ChatGPT, Claude וכו')</span>
+            </div>
+            <div class="scale-buttons" id="ai-scale" role="group" aria-label="דרגו היכרות עם כלי AI מ-1 עד 5">
+              <button type="button" class="scale-btn" data-group="ai" data-val="1" aria-pressed="false" aria-label="1 — בסיסי מאוד">1</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="2" aria-pressed="false" aria-label="2">2</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="3" aria-pressed="false" aria-label="3">3</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="4" aria-pressed="false" aria-label="4">4</button>
+              <button type="button" class="scale-btn" data-group="ai" data-val="5" aria-pressed="false" aria-label="5 — מתקדם">5</button>
             </div>
           </div>
-          <div class="scale-hint"><span>בסיסי מאוד</span><span>מתקדם</span></div>
+          <div class="scale-hint" aria-hidden="true"><span>בסיסי מאוד</span><span>מתקדם</span></div>
 
           <input type="hidden" id="computerSkill" name="computerSkill">
           <input type="hidden" id="aiSkill" name="aiSkill">
@@ -393,7 +426,7 @@
 
         <!-- Section 4: ציפיות -->
         <div class="section">
-          <div class="section-title"><span class="num">4</span> תיאום ציפיות</div>
+          <div class="section-title" aria-hidden="true"><span class="num">4</span> תיאום ציפיות</div>
 
           <div class="field">
             <label for="expectations">מה הדבר העיקרי שהייתם רוצים לדעת לעשות בסוף הסדנה? מהן הציפיות שלכם?</label>
@@ -404,32 +437,49 @@
 
         <button type="submit" class="submit-btn" id="submit-btn">
           <span id="btn-text">שלח שאלון</span>
-          <div class="spinner" id="spinner"></div>
+          <div class="spinner" id="spinner" aria-hidden="true"></div>
         </button>
-        <div class="error-msg" id="error-msg"></div>
+        <div class="error-msg" id="error-msg" role="alert" aria-live="assertive"></div>
 
       </form>
     </div>
 
     <!-- Success screen (hidden) -->
-    <div id="success-screen">
-      <div class="success-icon">✅</div>
+    <div id="success-screen" aria-live="polite" tabindex="-1">
+      <div class="success-icon" aria-hidden="true">✅</div>
       <h2>השאלון נשלח בהצלחה!</h2>
       <p>תודה רבה, <strong id="success-name"></strong>.<br>קיבלתי את פרטייך ואצור איתך קשר בהקדם לתיאום המפגש.</p>
-      <p style="margin-top:16px;font-size:.85rem;color:#aaa">ניר ברמן | AI-AM Solutions</p>
+      <p style="margin-top:16px;font-size:.85rem;color:#595959">ניר ברמן | AI-AM Solutions</p>
     </div>
 
     <div class="footer">
       ניר ברמן | AI-AM Solutions
     </div>
   </div>
+  </main>
+
+  <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
 
   <script>
     // ── Radio → show/hide business section ──────────────────────────────────
     document.querySelectorAll('input[name="clientType"]').forEach(radio => {
       radio.addEventListener('change', () => {
         const biz = document.getElementById('business-section');
-        biz.classList.toggle('visible', radio.value === 'business' && radio.checked);
+        const isVisible = radio.value === 'business' && radio.checked;
+        biz.classList.toggle('visible', isVisible);
+        biz.setAttribute('aria-hidden', String(!isVisible));
       });
     });
 
@@ -437,8 +487,12 @@
     document.querySelectorAll('.scale-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const group = btn.dataset.group;
-        document.querySelectorAll(`.scale-btn[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+        document.querySelectorAll(`.scale-btn[data-group="${group}"]`).forEach(b => {
+          b.classList.remove('selected');
+          b.setAttribute('aria-pressed', 'false');
+        });
         btn.classList.add('selected');
+        btn.setAttribute('aria-pressed', 'true');
         document.getElementById(group === 'computer' ? 'computerSkill' : 'aiSkill').value = btn.dataset.val;
       });
     });
@@ -447,21 +501,22 @@
     document.getElementById('questionnaire').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const form     = e.target;
-      const errorEl  = document.getElementById('error-msg');
+      const form      = e.target;
+      const errorEl   = document.getElementById('error-msg');
       const submitBtn = document.getElementById('submit-btn');
-      const spinner  = document.getElementById('spinner');
-      const btnText  = document.getElementById('btn-text');
+      const spinner   = document.getElementById('spinner');
+      const btnText   = document.getElementById('btn-text');
 
       // Clear previous errors
       errorEl.style.display = 'none';
+      errorEl.textContent   = '';
       document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
 
       // Validate
-      const errors = [];
-      const name   = form.name.value.trim();
-      const phone  = form.phone.value.trim();
-      const email  = form.email.value.trim();
+      const errors     = [];
+      const name       = form.name.value.trim();
+      const phone      = form.phone.value.trim();
+      const email      = form.email.value.trim();
       const clientType = form.clientType.value;
 
       if (!name)  { document.getElementById('name').classList.add('invalid');  errors.push('שם מלא'); }
@@ -473,15 +528,19 @@
       if (!clientType) { errors.push('סוג לקוח'); }
 
       if (errors.length) {
-        errorEl.textContent = `נא למלא את השדות הבאים: ${errors.join(', ')}`;
-        errorEl.style.display = 'block';
+        errorEl.textContent    = `נא למלא את השדות הבאים: ${errors.join(', ')}`;
+        errorEl.style.display  = 'block';
+        // Move focus to first invalid field
+        const firstInvalid = document.querySelector('.invalid');
+        if (firstInvalid) firstInvalid.focus();
         return;
       }
 
       // Show spinner
-      submitBtn.disabled = true;
+      submitBtn.disabled   = true;
       spinner.style.display = 'block';
-      btnText.textContent = 'שולח...';
+      btnText.textContent  = 'שולח...';
+      submitBtn.setAttribute('aria-busy', 'true');
 
       try {
         const payload = {
@@ -504,18 +563,20 @@
 
         if (!res.ok) throw new Error(json.error || 'שגיאה בשרת');
 
-        // Show success
+        // Show success and move focus
         document.getElementById('form-body').style.display = 'none';
         const success = document.getElementById('success-screen');
         document.getElementById('success-name').textContent = name;
         success.style.display = 'flex';
+        success.focus();
 
       } catch (err) {
-        errorEl.textContent = err.message || 'שגיאה בשליחה. נסה שוב.';
-        errorEl.style.display = 'block';
-        submitBtn.disabled = false;
-        spinner.style.display = 'none';
-        btnText.textContent = 'שלח שאלון';
+        errorEl.textContent    = err.message || 'שגיאה בשליחה. נסה שוב.';
+        errorEl.style.display  = 'block';
+        submitBtn.disabled     = false;
+        submitBtn.removeAttribute('aria-busy');
+        spinner.style.display  = 'none';
+        btnText.textContent    = 'שלח שאלון';
       }
     });
   </script>
