@@ -329,6 +329,11 @@ function page(title, body, color) {
 </div></body></html>`;
 }
 
+// ─── Health check ─────────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => {
+  res.json({ apiKey: !!process.env.ANTHROPIC_API_KEY })
+})
+
 // ─── Chat API ─────────────────────────────────────────────────────────────────
 app.post('/api/chat', async (req, res) => {
   const { messages } = req.body;
