@@ -49,6 +49,24 @@ AI-AM Solutions מספקת פתרונות מבוססי בינה מלאכותית
 const app  = express();
 const PORT = process.env.PORT || 3001;
 
+const ALLOWED_ORIGINS = [
+  'https://distai-am-solutions.web.app',
+  'https://ai-am-solutions.co.il',
+  'http://localhost:5173',
+  'http://localhost:3001',
+]
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  if (req.method === 'OPTIONS') return res.sendStatus(204)
+  next()
+})
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
